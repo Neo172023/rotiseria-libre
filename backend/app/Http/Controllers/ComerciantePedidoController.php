@@ -19,7 +19,7 @@ class ComerciantePedidoController extends Controller {
   $d=$r->validate(['estado'=>'required|in:recibido,preparando,listo,enviado,entregado,cancelado']);
   $found=DB::table('pedidos')->where('comercio_id',$comercio->id)->where('id',$pedido)->first();
   abort_unless($found,404);
-  DB::transaction(function () use ($comercio,$pedido,$d) {
+  DB::transaction(function () use ($comercio,$pedido,$d,$r) {
    $actual=DB::table('pedidos')->where('comercio_id',$comercio->id)->where('id',$pedido)->lockForUpdate()->first();
    abort_unless($actual,404);
    if($actual->estado==='cancelado' && $d['estado']!=='cancelado')abort(422,'Un pedido cancelado no puede reactivarse automáticamente.');
@@ -28,7 +28,11 @@ class ComerciantePedidoController extends Controller {
     foreach($items as $item){
      if($item->producto_id===null)continue;
      $producto=DB::table('productos')->where('id',$item->producto_id)->where('comercio_id',$comercio->id)->lockForUpdate()->first();
-     if($producto && $producto->stock_disponible!==null)DB::table('productos')->where('id',$producto->id)->increment('stock_disponible',$item->cantidad);
+     if($producto && $producto->stock_disponible!==null){
+      $nuevo=$producto->stock_disponible+$item->cantidad;
+      DB::table('productos')->where('id',$producto->id)->update(['stock_disponible'=>$nuevo,'updated_at'=>now()]);
+      DB::table('movimientos_stock')->insert(['comercio_id'=>$comercio->id,'producto_id'=>$producto->id,'usuario_id'=>$r->user()->id,'pedido_id'=>$pedido,'tipo'=>'cancelacion','cantidad_cambio'=>$item->cantidad,'stock_anterior'=>$producto->stock_disponible,'stock_nuevo'=>$nuevo,'motivo'=>'Cancelación del pedido','created_at'=>now()]);
+     }
     }
    }
    DB::table('pedidos')->where('comercio_id',$comercio->id)->where('id',$pedido)->update(['estado'=>$d['estado'],'updated_at'=>now()]);
