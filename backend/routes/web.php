@@ -1,3 +1,16 @@
 <?php
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SuperadminComercioController;
+use App\Http\Middleware\RequireSuperadmin;
 use Illuminate\Support\Facades\Route;
 Route::get('/', fn () => response()->json(['app' => 'Rotisería Libre', 'status' => 'backend en construcción']));
+Route::middleware('guest')->group(function () {
+    Route::view('/ingresar', 'auth.login')->name('login');
+    Route::post('/ingresar', [AuthController::class, 'login'])->middleware('throttle:5,1');
+});
+Route::post('/salir', [AuthController::class, 'logout'])->middleware('auth');
+Route::middleware(['auth', RequireSuperadmin::class])->prefix('admin')->group(function () {
+    Route::get('/comercios', [SuperadminComercioController::class, 'index']);
+    Route::post('/comercios', [SuperadminComercioController::class, 'store']);
+    Route::patch('/comercios/{comercio}/estado', [SuperadminComercioController::class, 'estado']);
+});
