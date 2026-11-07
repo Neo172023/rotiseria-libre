@@ -23,6 +23,7 @@
 <a class="back" href="/comerciante">← Mis comercios</a>
 <span class="brand">🍕 ROTISERÍA LIBRE</span>
 </header>
+@include('comerciante.partials.navegacion')
 <h1 class="heading">Tablero de {{ $comercio->nombre }}</h1>
 <p class="subtitle muted">Resumen operativo · {{ now()->format('d/m/Y') }}</p>
 <section class="metrics" aria-label="Indicadores del comercio">

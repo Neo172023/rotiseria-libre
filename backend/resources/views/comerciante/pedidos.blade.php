@@ -12,6 +12,7 @@
 <a class="back" href="/comerciante">← Volver a mis comercios</a>
 <span class="brand">🍕 ROTISERÍA LIBRE</span>
 </header>
+@include('comerciante.partials.navegacion')
 <h1 class="heading">Pedidos</h1>
 <p class="subtitle muted">{{ $comercio->nombre }} · Gestioná los pedidos recibidos</p>
 @if(session('ok'))

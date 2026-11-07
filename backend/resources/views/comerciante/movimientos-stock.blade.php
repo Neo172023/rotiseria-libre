@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="{{ asset('css/comerciante.css') }}"></head>
 <body><main class="wrap">
 <header class="top"><a class="back" href="/comerciante/{{ $comercio->id }}/productos">← Volver a productos</a><span class="brand">🍕 ROTISERÍA LIBRE</span></header>
+@include('comerciante.partials.navegacion')
 <h1 class="heading">Historial de movimientos de stock</h1>
 <p class="subtitle muted">{{ $comercio->nombre }} · Ventas, cancelaciones y ajustes</p>
 <section class="panel" style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;text-align:left">
