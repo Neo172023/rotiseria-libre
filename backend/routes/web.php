@@ -27,3 +27,8 @@ Route::middleware('auth')->prefix('comerciante/{comercio}')->group(function () {
     Route::patch('/productos/{producto}', [ComercianteProductoController::class, 'update']);
     Route::delete('/productos/{producto}', [ComercianteProductoController::class, 'destroy']);
 });
+
+Route::middleware('auth')->prefix('comerciante/{comercio}')->group(function () {
+ Route::get('/pedidos', [\App\Http\Controllers\ComerciantePedidoController::class, 'index']);
+ Route::patch('/pedidos/{pedido}/estado', [\App\Http\Controllers\ComerciantePedidoController::class, 'estado']);
+});
