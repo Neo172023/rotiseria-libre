@@ -32,3 +32,5 @@ Route::middleware('auth')->prefix('comerciante/{comercio}')->group(function () {
  Route::get('/pedidos', [\App\Http\Controllers\ComerciantePedidoController::class, 'index']);
  Route::patch('/pedidos/{pedido}/estado', [\App\Http\Controllers\ComerciantePedidoController::class, 'estado']);
 });
+
+Route::middleware('auth')->post('/comerciante/{comercio}/logo', [\App\Http\Controllers\ComercianteImagenController::class, 'logo']);
