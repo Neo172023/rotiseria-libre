@@ -36,3 +36,5 @@ Route::middleware('auth')->prefix('comerciante/{comercio}')->group(function () {
 Route::middleware('auth')->post('/comerciante/{comercio}/logo', [\App\Http\Controllers\ComercianteImagenController::class, 'logo']);
 
 Route::middleware('auth')->patch('/comerciante/{comercio}/identidad', [\App\Http\Controllers\ComercianteIdentidadController::class, 'update']);
+
+Route::middleware('auth')->get('/comerciante/{comercio}/tablero', [\App\Http\Controllers\ComercianteDashboardController::class, 'index']);
