@@ -44,7 +44,7 @@ async function cargarCatalogoRemoto() {
       price: Number(p.precio),
       offerPrice: p.precio_oferta == null ? null : Number(p.precio_oferta),
       offerUntil: p.oferta_hasta ? String(p.oferta_hasta).slice(0, 10) : "",
-      image: "", // No cargar rutas de imagen del servidor hasta validar almacenamiento y URLs.
+      image: p.imagen ? new URL(String(p.imagen), endpoint.origin).href : "",
     })).filter(p => p.name && Number.isFinite(p.price) && p.price > 0);
     products = parsed;
     cart = {};
