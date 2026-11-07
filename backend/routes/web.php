@@ -30,6 +30,7 @@ Route::middleware('auth')->prefix('comerciante/{comercio}')->group(function () {
 
 Route::middleware('auth')->prefix('comerciante/{comercio}')->group(function () {
  Route::get('/pedidos', [\App\Http\Controllers\ComerciantePedidoController::class, 'index']);
+ Route::get('/pedidos/{pedido}', [\App\Http\Controllers\ComerciantePedidoController::class, 'show']);
  Route::patch('/pedidos/{pedido}/estado', [\App\Http\Controllers\ComerciantePedidoController::class, 'estado']);
 });
 
