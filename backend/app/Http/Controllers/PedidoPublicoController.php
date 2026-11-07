@@ -17,7 +17,7 @@ class PedidoPublicoController extends Controller {
    $sum=0;$lines=[];
    foreach($d['items'] as $item){
     $p=$products->get($item['producto_id']);$price=$p->precio;
-    if($p->precio_oferta!==null && $p->oferta_hasta!==null && $p->oferta_hasta->isFuture() && (float)$p->precio_oferta<(float)$p->precio)$price=$p->precio_oferta;
+    if($p->precio_oferta!==null && ($p->oferta_hasta===null || $p->oferta_hasta->isFuture()) && (float)$p->precio_oferta<(float)$p->precio)$price=$p->precio_oferta;
     $cents=(int)round((float)$price*100);$line=$cents*$item['cantidad'];$sum+=$line;
     $lines[]=['producto_id'=>$p->id,'descripcion'=>$p->nombre,'cantidad'=>$item['cantidad'],'precio_unitario'=>number_format($cents/100,2,'.',''),'total'=>number_format($line/100,2,'.',''),'created_at'=>now(),'updated_at'=>now()];
    }
