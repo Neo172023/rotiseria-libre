@@ -63,6 +63,7 @@
 <label class="field full">Foto del producto (JPG, PNG o WebP, máximo 3 MB) <input type="file" name="imagen" accept="image/jpeg,image/png,image/webp"></label>
 <label class="field">Disponible <select name="disponible"><option value="1" @selected(old('disponible','1') == '1')>Sí</option><option value="0" @selected(old('disponible') == '0')>No</option></select></label>
 </div>
+<label class="field">Unidades disponibles (vacío = sin límite) <input name="stock_disponible" type="number" min="0" max="1000000" value="{{ old('stock_disponible') }}" placeholder="Ej.: 15"></label>
 <div class="actions"><button class="btn" type="submit">Agregar producto</button></div>
 </form>
 </section>
@@ -73,12 +74,13 @@
 <article class="card">
 <div class="cardhead">
 <h3>{{ $producto->nombre }}</h3>
-<span class="badge">{{ $producto->disponible ? 'Disponible' : 'No disponible' }}</span>
+<span class="badge">{{ !$producto->disponible ? 'Oculto' : ($producto->stock_disponible === 0 ? 'Agotado' : ($producto->stock_disponible !== null && $producto->stock_disponible <= 3 ? '⚠️ Stock bajo' : 'Disponible')) }}</span>
 </div>
 @if($producto->imagen)
 <img src="{{ asset('storage/'.$producto->imagen) }}" alt="Foto de {{ $producto->nombre }}" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:10px;margin:12px 0">
 @endif
 <p class="muted small">{{ $producto->descripcion }}</p>
+<p class="small"><strong>Stock:</strong> {{ $producto->stock_disponible === null ? 'Sin límite' : $producto->stock_disponible . ' unidades' }}</p>
 <p class="amount">$ {{ number_format((float) $producto->precio, 2, ',', '.') }}</p>
 @if($producto->precio_oferta !== null)
 <p class="small">Oferta: <strong>$ {{ number_format((float) $producto->precio_oferta, 2, ',', '.') }}</strong></p>
@@ -97,6 +99,7 @@
 <label class="field full">Oferta hasta <input name="oferta_hasta" type="datetime-local" value="{{ $producto->oferta_hasta?->format('Y-m-d\TH:i') }}"></label>
 <label class="field">Disponible <select name="disponible"><option value="1" @selected($producto->disponible)>Sí</option><option value="0" @selected(!$producto->disponible)>No</option></select></label>
 </div>
+<label class="field">Unidades disponibles (vacío = sin límite) <input name="stock_disponible" type="number" min="0" max="1000000" value="{{ $producto->stock_disponible }}" placeholder="Sin límite"></label>
 <div class="actions"><button class="btn" type="submit">Guardar cambios</button></div>
 </form>
 <hr class="divider">

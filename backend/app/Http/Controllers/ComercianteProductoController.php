@@ -52,6 +52,7 @@ class ComercianteProductoController extends Controller {
             'precio_oferta' => ['nullable','numeric','min:0','lte:precio'],
             'oferta_hasta' => ['nullable','date','after:now'],
             'disponible' => ['required','boolean'],
+            'stock_disponible' => ['nullable','integer','min:0','max:1000000'],
             'imagen' => ['nullable','image','mimes:jpg,jpeg,png,webp','max:3072'],
         ]);
     }
