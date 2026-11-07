@@ -51,6 +51,7 @@ async function cargarCatalogoRemoto() {
     config = {
       ...defaults,
       name: String(data.comercio.nombre),
+      logo: data.comercio.logo ? new URL(String(data.comercio.logo), endpoint.origin).href : "",
       phone: String(data.comercio.telefono_whatsapp || "").replace(/\\D/g, ""),
     };
     remoteOrderEndpoint = new URL(endpoint.href.replace(/\/catalogo$/, "/pedidos"));
