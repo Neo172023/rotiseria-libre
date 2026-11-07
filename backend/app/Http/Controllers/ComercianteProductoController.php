@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class ComercianteProductoController extends Controller {
     private function comercioAutorizado(Request $request, Comercio $comercio): void {
@@ -25,6 +26,7 @@ class ComercianteProductoController extends Controller {
     public function store(Request $request, Comercio $comercio) {
         $this->comercioAutorizado($request, $comercio);
         $data = $this->validar($request);
+        $this->verificarDuplicado($comercio, $data['nombre']);
         $producto = new Producto(collect($data)->except('imagen')->all());
         $producto->comercio_id = $comercio->id;
         $producto->save();
@@ -34,7 +36,9 @@ class ComercianteProductoController extends Controller {
     public function update(Request $request, Comercio $comercio, Producto $producto) {
         $this->comercioAutorizado($request, $comercio);
         abort_unless($producto->comercio_id === $comercio->id, 404);
-        $producto->update(collect($this->validar($request))->except('imagen')->all());
+        $data = $this->validar($request);
+        $this->verificarDuplicado($comercio, $data['nombre'], $producto->id);
+        $producto->update(collect($data)->except('imagen')->all());
         if ($request->hasFile('imagen')) { $old = $producto->imagen; $producto->imagen = $request->file('imagen')->store('comercios/'.$comercio->id.'/productos','public'); $producto->save(); if ($old) Storage::disk('public')->delete($old); }
         return back()->with('ok', 'Producto actualizado.');
     }
@@ -43,6 +47,24 @@ class ComercianteProductoController extends Controller {
         abort_unless($producto->comercio_id === $comercio->id, 404);
         $producto->delete();
         return back()->with('ok', 'Producto retirado del catálogo.');
+    }
+    private function verificarDuplicado(Comercio $comercio, string $nombre, ?int $exceptoId = null): void {
+        $normalizar = static function (string $valor): string {
+            $valor = mb_strtolower(trim($valor), 'UTF-8');
+            $valor = \Illuminate\Support\Str::ascii($valor);
+            return preg_replace('/\\s+/u', ' ', $valor);
+        };
+        $buscado = $normalizar($nombre);
+        $productos = Producto::where('comercio_id', $comercio->id)
+            ->when($exceptoId !== null, fn ($query) => $query->where('id', '!=', $exceptoId))
+            ->get(['id', 'nombre']);
+        foreach ($productos as $existente) {
+            if ($normalizar($existente->nombre) === $buscado) {
+                throw ValidationException::withMessages([
+                    'nombre' => 'Este producto ya existe en tu catálogo. Editá el producto existente para actualizar el precio o el stock.',
+                ]);
+            }
+        }
     }
     private function validar(Request $request): array {
         return $request->validate([
