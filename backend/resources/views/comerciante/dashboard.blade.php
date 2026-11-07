@@ -31,6 +31,21 @@
 <div class="metric"><span>Listos</span><strong>{{ $resumen['listos'] }}</strong></div>
 <div class="metric"><span>Pedidos de hoy</span><strong>{{ $resumen['pedidos_hoy'] }}</strong></div>
 </section>
+@if($stockBajo->isNotEmpty())
+<section class="panel" style="border:2px solid #d97706" role="alert">
+<h2>⚠️ Alerta de stock</h2>
+<p>Los siguientes productos tienen 3 unidades o menos:</p>
+<ul>@foreach($stockBajo as $producto)<li><strong>{{ $producto->nombre }}</strong>: {{ $producto->stock_disponible === 0 ? 'AGOTADO' : $producto->stock_disponible . ' disponibles' }}</li>@endforeach</ul>
+<a class="btn" href="/comerciante/{{ $comercio->id }}/productos">Actualizar stock</a>
+<button type="button" class="btn secondary" id="alerta-sonido" style="margin-top:8px">🔔 Activar alarma sonora</button>
+</section>
+<script>
+const alarma=document.getElementById("alerta-sonido");
+alarma?.addEventListener("click",()=>{
+ try { const ctx=new (window.AudioContext||window.webkitAudioContext)(); const osc=ctx.createOscillator(); const gain=ctx.createGain(); osc.frequency.value=880; gain.gain.value=.08; osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime+.35); osc.onended=()=>ctx.close(); alarma.textContent="🔔 Alarma probada"; } catch(e) { alarma.textContent="Sonido no disponible"; }
+});
+</script>
+@endif
 <section class="panel">
 <h2>Ventas del día</h2>
 <p class="amount">$ {{ number_format((float) $resumen['ventas_hoy'], 2, ',', '.') }}</p>
