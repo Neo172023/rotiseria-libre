@@ -18,3 +18,10 @@
 - **No hay todavía panel de comerciante, creación de cuentas de comerciantes, catálogo por API, pedidos ni sincronización con GitHub Pages.**
 - No se han ejecutado pruebas ni verificado instalación en este entorno.
 - Antes de producción: revisión de seguridad, auditoría, control de privilegios, pruebas y configuración de HTTPS, sesiones y despliegue.
+
+### Etapa de comerciantes
+- El superadministrador puede crear cuentas de comerciantes y asignarlas a un comercio.
+- Un comerciante autenticado ve en `/comerciante` únicamente los comercios habilitados que tiene asignados.
+- No existe alta pública de usuarios ni de comercios.
+- **Pendiente:** gestión de contraseñas iniciales con invitaciones seguras, políticas por rol, panel de productos y pedidos, y pruebas de despliegue.
+- No se han ejecutado las pruebas en este entorno.

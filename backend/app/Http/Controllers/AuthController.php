@@ -11,7 +11,7 @@ class AuthController extends Controller {
             return back()->withErrors(['email' => 'Credenciales incorrectas.'])->onlyInput('email');
         }
         $request->session()->regenerate();
-        return redirect()->intended('/admin/comercios');
+        return redirect()->intended($request->user()->is_superadmin ? '/admin/comercios' : '/comerciante');
     }
     public function logout(Request $request) {
         Auth::logout();
