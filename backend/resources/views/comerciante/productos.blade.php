@@ -64,6 +64,7 @@
 <label class="field">Disponible <select name="disponible"><option value="1" @selected(old('disponible','1') == '1')>Sí</option><option value="0" @selected(old('disponible') == '0')>No</option></select></label>
 </div>
 <label class="field">Unidades disponibles (vacío = sin límite) <input name="stock_disponible" type="number" min="0" max="1000000" value="{{ old('stock_disponible') }}" placeholder="Ej.: 15"></label>
+<label class="field"><span><input type="checkbox" name="confirmar_similar" value="1" @checked(old('confirmar_similar'))> Crear de todos modos si ya revisaste el catálogo y es un producto distinto</span></label>
 <div class="actions"><button class="btn" type="submit">Agregar producto</button></div>
 </form>
 </section>
@@ -100,6 +101,7 @@
 <label class="field">Disponible <select name="disponible"><option value="1" @selected($producto->disponible)>Sí</option><option value="0" @selected(!$producto->disponible)>No</option></select></label>
 </div>
 <label class="field">Unidades disponibles (vacío = sin límite) <input name="stock_disponible" type="number" min="0" max="1000000" value="{{ $producto->stock_disponible }}" placeholder="Sin límite"></label>
+<label class="field"><span><input type="checkbox" name="confirmar_similar" value="1"> Confirmar si el nombre es parecido al de otro producto distinto</span></label>
 <div class="actions"><button class="btn" type="submit">Guardar cambios</button></div>
 </form>
 <hr class="divider">
