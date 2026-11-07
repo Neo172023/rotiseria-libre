@@ -23,13 +23,17 @@ class PedidoPublicoController extends Controller {
     $cents=(int)round((float)$price*100);$line=$cents*$item['cantidad'];$sum+=$line;
     $lines[]=['producto_id'=>$p->id,'descripcion'=>$p->nombre,'cantidad'=>$item['cantidad'],'precio_unitario'=>number_format($cents/100,2,'.',''),'total'=>number_format($line/100,2,'.',''),'created_at'=>now(),'updated_at'=>now()];
    }
-   foreach($d['items'] as $item){
-    $p=$products->get($item['producto_id']);
-    if($p->stock_disponible !== null){$p->stock_disponible -= $item['cantidad'];$p->save();}
-   }
    $id=DB::table('pedidos')->insertGetId(['comercio_id'=>$c->id,'cliente_nombre'=>$d['cliente_nombre'],'modalidad'=>$d['modalidad'],'direccion'=>$d['modalidad']==='delivery'?($d['direccion']??null):null,'pago'=>$d['pago'],'estado'=>'recibido','subtotal'=>number_format($sum/100,2,'.',''),'costo_envio'=>'0.00','total'=>number_format($sum/100,2,'.',''),'notas'=>$d['notas']??null,'created_at'=>now(),'updated_at'=>now()]);
    foreach($lines as &$line)$line['pedido_id']=$id;
    unset($line);DB::table('pedido_items')->insert($lines);
+   foreach ($d['items'] as $item) {
+    $p = $products->get($item['producto_id']);
+    if ($p->stock_disponible === null) continue;
+    $antes = $p->stock_disponible;
+    $p->stock_disponible -= $item['cantidad'];
+    $p->save();
+    DB::table('movimientos_stock')->insert(['comercio_id'=>$c->id,'producto_id'=>$p->id,'usuario_id'=>null,'pedido_id'=>$id,'tipo'=>'venta','cantidad_cambio'=>-$item['cantidad'],'stock_anterior'=>$antes,'stock_nuevo'=>$p->stock_disponible,'motivo'=>'Pedido confirmado','created_at'=>now()]);
+   }
    return response()->json(['id'=>$id,'estado'=>'recibido','total'=>number_format($sum/100,2,'.',''),'moneda'=>'ARS'],201);
   });
  }
