@@ -26,6 +26,7 @@
 @include('comerciante.partials.navegacion')
 <h1 class="heading">Tablero de {{ $comercio->nombre }}</h1>
 <p class="subtitle muted">Resumen operativo · {{ now()->format('d/m/Y') }}</p>
+@include('comerciante.partials.notificaciones-pedidos')
 <section class="metrics" aria-label="Indicadores del comercio">
 <div class="metric"><span>Pedidos nuevos</span><strong>{{ $resumen['nuevos'] }}</strong></div>
 <div class="metric"><span>En preparación</span><strong>{{ $resumen['preparando'] }}</strong></div>
