@@ -1,3 +1,4 @@
+<p><a href="/comerciante">← Volver a mis comercios</a></p>
 <h1>Pedidos</h1>
 @foreach($pedidos as $pedido)
 <p>Pedido #{{ $pedido->id }} — {{ $pedido->cliente_nombre }} — ${{ $pedido->total }} — {{ $pedido->estado }}</p>
