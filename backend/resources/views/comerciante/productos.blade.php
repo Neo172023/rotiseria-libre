@@ -36,6 +36,21 @@
 </form>
 </section>
 <section class="panel">
+<h2>Personalización de la tienda</h2>
+<p class="muted small">Estos datos y colores se aplican solo a {{ $comercio->nombre }}.</p>
+<form method="POST" action="/comerciante/{{ $comercio->id }}/identidad">
+@csrf
+@method('PATCH')
+<div class="grid">
+<label class="field full">Frase de presentación <input name="lema" maxlength="180" value="{{ old('lema', $comercio->lema) }}" placeholder="¡Rico, casero y a tu puerta!"></label>
+<label class="field full">Descripción de la rotisería <textarea name="descripcion" maxlength="2000">{{ old('descripcion', $comercio->descripcion) }}</textarea></label>
+<label class="field">Color de cabecera <input type="color" name="color_primario" value="{{ old('color_primario', $comercio->color_primario ?? '#662b20') }}"></label>
+<label class="field">Color de botones <input type="color" name="color_boton" value="{{ old('color_boton', $comercio->color_boton ?? '#b33b22') }}"></label>
+</div>
+<div class="actions"><button class="btn" type="submit">Guardar personalización</button></div>
+</form>
+</section>
+<section class="panel">
 <h2>Agregar producto</h2>
 <form method="POST" enctype="multipart/form-data" action="/comerciante/{{ $comercio->id }}/productos">
 @csrf
