@@ -37,6 +37,7 @@
 <span class="badge {{ $pedido->estado }}">{{ ucfirst($pedido->estado) }}</span>
 </div>
 <p class="amount">$ {{ number_format((float) $pedido->total, 2, ',', '.') }}</p>
+<p><a class="btn secondary" href="/comerciante/{{ $comercio->id }}/pedidos/{{ $pedido->id }}">🧾 Ver detalle completo</a></p>
 <p class="muted small">Estado actual: {{ $pedido->estado }}</p>
 <form class="inlineform" method="POST" action="/comerciante/{{ $comercio->id }}/pedidos/{{ $pedido->id }}/estado">
 @csrf
