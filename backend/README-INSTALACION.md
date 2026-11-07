@@ -1,19 +1,20 @@
 # Instalación local (Laravel 12)
 
-Este es un **esqueleto inicial**, no un panel listo para producción. Requiere PHP 8.2+, Composer y MySQL. Todavía no tiene login, políticas, controladores de comercios ni API de pedidos.
+**En desarrollo: no desplegar en producción.** Requiere PHP 8.2+, Composer, MySQL y extensiones PHP correspondientes.
 
-1. Abrir terminal en `backend/`.
-2. Ejecutar `composer install` (genera `composer.lock` localmente).
-3. Copiar `.env.example` a `.env`.
-4. Ejecutar `php artisan key:generate`.
-5. Crear una base MySQL vacía llamada `rotiseria_libre` y configurar credenciales en `.env`.
-6. Ejecutar `php artisan migrate`.
-7. Ejecutar `php artisan serve` y abrir `http://127.0.0.1:8000/api/estado`.
+1. En `backend/`, ejecutar `composer install`.
+2. Copiar `.env.example` a `.env` y ejecutar `php artisan key:generate`.
+3. Crear la base MySQL `rotiseria_libre` y configurar las credenciales en `.env`.
+4. Ejecutar `php artisan migrate`.
+5. Ejecutar `php artisan rotiseria:crear-superadmin` (solicita nombre, correo y contraseña; no hay claves precargadas).
+6. Ejecutar `php artisan serve` y visitar `http://127.0.0.1:8000/ingresar`.
+7. Probar con `php artisan test` (requiere extensión SQLite para pruebas).
 
-**No usar credenciales reales en GitHub.** No ejecutar en un servidor público con `APP_DEBUG=true`. La creación exclusiva de comercios por superadministrador todavía **no está implementada**; es el siguiente desarrollo.
-
-### Pendientes
-- Login seguro y bootstrap del superadministrador sin claves precargadas.
-- Políticas, control de comercios habilitados, aislamiento de tenants y pruebas.
-- API pública de catálogo, API privada y pedidos.
-- Revisión de migraciones y pruebas de instalación real.
+### Alcance
+- Inicio y cierre de sesión web con CSRF, regeneración de sesión y limitación de intentos.
+- Solo superadministrador puede listar, crear y cambiar estado de comercios.
+- Los nuevos comercios nacen pendientes.
+- No existe registro público de comercios.
+- **No hay todavía panel de comerciante, creación de cuentas de comerciantes, catálogo por API, pedidos ni sincronización con GitHub Pages.**
+- No se han ejecutado pruebas ni verificado instalación en este entorno.
+- Antes de producción: revisión de seguridad, auditoría, control de privilegios, pruebas y configuración de HTTPS, sesiones y despliegue.
