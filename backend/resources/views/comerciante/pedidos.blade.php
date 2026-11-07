@@ -25,6 +25,7 @@
 @endforeach
 </ul>
 @endif
+@include('comerciante.partials.notificaciones-pedidos')
 <section class="cards" aria-label="Pedidos registrados">
 @forelse($pedidos as $pedido)
 <article class="card">
