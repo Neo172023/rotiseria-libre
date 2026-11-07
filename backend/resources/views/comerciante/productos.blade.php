@@ -12,6 +12,7 @@
 <a class="back" href="/comerciante">← Volver a mis comercios</a>
 <span class="brand">🍕 ROTISERÍA LIBRE</span>
 </header>
+@include('comerciante.partials.navegacion')
 <h1 class="heading">Productos</h1>
 <p><a class="btn" href="/comerciante/{{ $comercio->id }}/movimientos-stock">📋 Ver historial de stock</a></p>
 <p class="subtitle muted">{{ $comercio->nombre }} · Administrá tu catálogo</p>
