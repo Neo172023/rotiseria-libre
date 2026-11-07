@@ -70,7 +70,7 @@ async function sendRemoteOrder(form) {
   if(!items.length) return;
   const orderItems = [];
   for(const [key,item] of items) {
-    if(!/^\\d+$/.test(key) || !Number.isInteger(item.qty) || item.qty<1 || item.qty>30) {
+    if(!/^\d+$/.test(key) || !Number.isInteger(item.qty) || item.qty<1 || item.qty>30) {
       el("feedback").textContent = "Hay un producto no compatible con el pedido online. Vacía el carrito y volvé a intentarlo.";
       return;
     }
@@ -95,7 +95,7 @@ async function sendRemoteOrder(form) {
     form.reset();
     el("addressRow").hidden=true;
     el("cashRow").hidden=false;
-    if(/^\\d{10,16}$/.test(config.phone)) {
+    if(/^\d{10,16}$/.test(config.phone)) {
       const link=document.createElement("a");
       link.href="https://wa.me/"+config.phone+"?text="+encodeURIComponent("Hola, registré el pedido #"+result.id+" en "+config.name+". Total: "+money(Number(result.total)));
       link.target="_blank";link.rel="noopener noreferrer";link.textContent="Avisar por WhatsApp (opcional)";
