@@ -37,6 +37,7 @@ class ComercianteDashboardController extends Controller
             ->whereNull('deleted_at')
             ->count();
 
-        return view('comerciante.dashboard', compact('comercio', 'resumen', 'recientes', 'productos'));
+        $stockBajo = DB::table('productos')->where('comercio_id', $comercio->id)->whereNull('deleted_at')->where('disponible', true)->whereNotNull('stock_disponible')->where('stock_disponible', '<=', 3)->orderBy('stock_disponible')->get(['id','nombre','stock_disponible']);
+        return view('comerciante.dashboard', compact('comercio', 'resumen', 'recientes', 'productos', 'stockBajo'));
     }
 }
