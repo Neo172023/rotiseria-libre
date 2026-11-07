@@ -14,6 +14,13 @@ class ComerciantePedidoController extends Controller {
   $pedidos=DB::table('pedidos')->where('comercio_id',$comercio->id)->orderByDesc('id')->paginate(25);
   return view('comerciante.pedidos',compact('comercio','pedidos'));
  }
+ public function show(Request $r, Comercio $comercio, int $pedido) {
+  $this->allowed($r,$comercio);
+  $detalle=DB::table('pedidos')->where('comercio_id',$comercio->id)->where('id',$pedido)->first();
+  abort_unless($detalle,404);
+  $items=DB::table('pedido_items')->where('pedido_id',$detalle->id)->orderBy('id')->get();
+  return view('comerciante.pedido-detalle',compact('comercio','detalle','items'));
+ }
  public function estado(Request $r,Comercio $comercio,int $pedido) {
   $this->allowed($r,$comercio);
   $d=$r->validate(['estado'=>'required|in:recibido,preparando,listo,enviado,entregado,cancelado']);
