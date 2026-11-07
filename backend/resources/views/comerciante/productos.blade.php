@@ -13,6 +13,7 @@
 <span class="brand">🍕 ROTISERÍA LIBRE</span>
 </header>
 <h1 class="heading">Productos</h1>
+<p><a class="btn" href="/comerciante/{{ $comercio->id }}/movimientos-stock">📋 Ver historial de stock</a></p>
 <p class="subtitle muted">{{ $comercio->nombre }} · Administrá tu catálogo</p>
 @if(session('ok'))
 <p class="notice" role="status">{{ session('ok') }}</p>
