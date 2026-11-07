@@ -40,3 +40,5 @@ Route::middleware('auth')->patch('/comerciante/{comercio}/identidad', [\App\Http
 Route::middleware('auth')->get('/comerciante/{comercio}/tablero', [\App\Http\Controllers\ComercianteDashboardController::class, 'index']);
 
 Route::middleware('auth')->get('/comerciante/{comercio}/movimientos-stock', [\App\Http\Controllers\ComercianteMovimientoStockController::class, 'index']);
+
+Route::middleware('auth')->get('/comerciante/{comercio}/novedades-pedidos', [\App\Http\Controllers\ComercianteDashboardController::class, 'novedades']);

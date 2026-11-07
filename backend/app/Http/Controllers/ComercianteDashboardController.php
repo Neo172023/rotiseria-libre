@@ -40,4 +40,18 @@ class ComercianteDashboardController extends Controller
         $stockBajo = DB::table('productos')->where('comercio_id', $comercio->id)->whereNull('deleted_at')->where('disponible', true)->whereNotNull('stock_disponible')->where('stock_disponible', '<=', 3)->orderBy('stock_disponible')->get(['id','nombre','stock_disponible']);
         return view('comerciante.dashboard', compact('comercio', 'resumen', 'recientes', 'productos', 'stockBajo'));
     }
+    public function novedades(Request $request, Comercio $comercio)
+    {
+        abort_unless($comercio->estado === 'habilitado', 404);
+        abort_unless(DB::table('comercio_usuarios')->where('comercio_id', $comercio->id)
+            ->where('user_id', $request->user()->id)->exists(), 403);
+        $pedidos = DB::table('pedidos')->where('comercio_id', $comercio->id);
+        return response()->json([
+            'ultimo_id' => (int) (clone $pedidos)->max('id'),
+            'nuevos' => (clone $pedidos)->where('estado', 'recibido')->count(),
+            'preparando' => (clone $pedidos)->where('estado', 'preparando')->count(),
+            'listos' => (clone $pedidos)->where('estado', 'listo')->count(),
+            'pedidos_hoy' => (clone $pedidos)->where('created_at', '>=', now()->startOfDay())->count(),
+        ])->header('Cache-Control', 'no-store');
+    }
 }
