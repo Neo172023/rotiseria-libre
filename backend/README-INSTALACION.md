@@ -25,3 +25,9 @@
 - No existe alta pública de usuarios ni de comercios.
 - **Pendiente:** gestión de contraseñas iniciales con invitaciones seguras, políticas por rol, panel de productos y pedidos, y pruebas de despliegue.
 - No se han ejecutado las pruebas en este entorno.
+
+### Catálogo independiente (etapa inicial)
+- Propietarios asignados a un comercio habilitado pueden crear, modificar y retirar productos de **ese comercio**.
+- Catálogo público JSON: `/api/comercios/{slug}/catalogo` (solo habilitados y productos disponibles).
+- No hay todavía carga de imágenes, gestión de categorías, pedidos ni conexión con la tienda estática de GitHub Pages.
+- Ejecutar pruebas locales antes de integrar o publicar.

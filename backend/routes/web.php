@@ -3,6 +3,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SuperadminComercioController;
 use App\Http\Controllers\SuperadminUsuarioController;
 use App\Http\Controllers\ComercianteController;
+use App\Http\Controllers\ComercianteProductoController;
 use App\Http\Middleware\RequireSuperadmin;
 use Illuminate\Support\Facades\Route;
 Route::get('/', fn () => response()->json(['app' => 'Rotisería Libre', 'status' => 'backend en construcción']));
@@ -19,3 +20,10 @@ Route::middleware(['auth', RequireSuperadmin::class])->prefix('admin')->group(fu
 });
 
 Route::middleware('auth')->get('/comerciante', [ComercianteController::class, 'index']);
+
+Route::middleware('auth')->prefix('comerciante/{comercio}')->group(function () {
+    Route::get('/productos', [ComercianteProductoController::class, 'index']);
+    Route::post('/productos', [ComercianteProductoController::class, 'store']);
+    Route::patch('/productos/{producto}', [ComercianteProductoController::class, 'update']);
+    Route::delete('/productos/{producto}', [ComercianteProductoController::class, 'destroy']);
+});
