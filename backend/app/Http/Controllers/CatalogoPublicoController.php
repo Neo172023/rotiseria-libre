@@ -13,7 +13,7 @@ class CatalogoPublicoController extends Controller {
             ->orderBy('nombre')
             ->get(['id','nombre','descripcion','precio','precio_oferta','oferta_hasta','imagen']);
         return response()->json([
-            'comercio' => ['nombre'=>$comercio->nombre,'slug'=>$comercio->slug,'telefono_whatsapp'=>$comercio->telefono_whatsapp,'logo'=>$comercio->logo ? Storage::disk('public')->url($comercio->logo) : null],
+            'comercio' => ['nombre'=>$comercio->nombre,'lema'=>$comercio->lema,'descripcion'=>$comercio->descripcion,'color_primario'=>$comercio->color_primario,'color_boton'=>$comercio->color_boton,'slug'=>$comercio->slug,'telefono_whatsapp'=>$comercio->telefono_whatsapp,'logo'=>$comercio->logo ? Storage::disk('public')->url($comercio->logo) : null],
             'productos' => $productos->map(function ($producto) { $producto->imagen = $producto->imagen ? Storage::disk('public')->url($producto->imagen) : null; return $producto; }),
         ]);
     }
