@@ -5,3 +5,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/estado', fn () => response()->json(['status' => 'ok', 'api' => 'en construcción']));
 
 Route::get('/comercios/{slug}/catalogo', [\App\Http\Controllers\CatalogoPublicoController::class, 'show']);
+
+Route::post('/comercios/{slug}/pedidos', [\App\Http\Controllers\PedidoPublicoController::class, 'store'])->middleware('throttle:10,1');
