@@ -8,6 +8,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Str;
 
 class ComercianteProductoController extends Controller {
     private function comercioAutorizado(Request $request, Comercio $comercio): void {
@@ -28,8 +29,10 @@ class ComercianteProductoController extends Controller {
         $data = $this->validar($request);
         $this->verificarDuplicado($comercio, $data['nombre'], null, $request->boolean('confirmar_similar'));
         $producto = new Producto(collect($data)->except('imagen')->all());
+        $producto->nombre_normalizado = $this->normalizarNombre($data['nombre']);
         $producto->comercio_id = $comercio->id;
         $producto->save();
+        $this->registrarStock($comercio->id, $producto->id, $request->user()->id, 'alta', null, $producto->stock_disponible, 'Stock inicial');
         if ($request->hasFile('imagen')) { $producto->imagen = $request->file('imagen')->store('comercios/'.$comercio->id.'/productos','public'); $producto->save(); }
         return back()->with('ok', 'Producto creado.');
     }
@@ -38,7 +41,16 @@ class ComercianteProductoController extends Controller {
         abort_unless($producto->comercio_id === $comercio->id, 404);
         $data = $this->validar($request);
         $this->verificarDuplicado($comercio, $data['nombre'], $producto->id, $request->boolean('confirmar_similar'));
-        $producto->update(collect($data)->except('imagen')->all());
+        DB::transaction(function () use ($producto, $data, $comercio, $request) {
+            $anterior = Producto::whereKey($producto->id)->lockForUpdate()->firstOrFail();
+            $stockAntes = $anterior->stock_disponible;
+            $anterior->fill(collect($data)->except('imagen')->all());
+            $anterior->nombre_normalizado = $this->normalizarNombre($data['nombre']);
+            $anterior->save();
+            if ($stockAntes !== $anterior->stock_disponible) {
+                $this->registrarStock($comercio->id, $anterior->id, $request->user()->id, 'ajuste', $stockAntes, $anterior->stock_disponible, 'Ajuste manual del comerciante');
+            }
+        });
         if ($request->hasFile('imagen')) { $old = $producto->imagen; $producto->imagen = $request->file('imagen')->store('comercios/'.$comercio->id.'/productos','public'); $producto->save(); if ($old) Storage::disk('public')->delete($old); }
         return back()->with('ok', 'Producto actualizado.');
     }
@@ -47,6 +59,17 @@ class ComercianteProductoController extends Controller {
         abort_unless($producto->comercio_id === $comercio->id, 404);
         $producto->delete();
         return back()->with('ok', 'Producto retirado del catálogo.');
+    }
+    private function normalizarNombre(string $nombre): string {
+        return trim(preg_replace('/\\s+/u', ' ', Str::ascii(mb_strtolower(trim($nombre), 'UTF-8'))));
+    }
+    private function registrarStock(int $comercioId, int $productoId, int $usuarioId, string $tipo, ?int $antes, ?int $despues, string $motivo): void {
+        if ($antes === $despues) return;
+        DB::table('movimientos_stock')->insert([
+            'comercio_id'=>$comercioId, 'producto_id'=>$productoId, 'usuario_id'=>$usuarioId,
+            'tipo'=>$tipo, 'cantidad_cambio'=>($despues ?? 0)-($antes ?? 0),
+            'stock_anterior'=>$antes, 'stock_nuevo'=>$despues, 'motivo'=>$motivo, 'created_at'=>now(),
+        ]);
     }
     private function verificarDuplicado(Comercio $comercio, string $nombre, ?int $exceptoId = null, bool $confirmado = false): void {
         $normalizar = static function (string $valor): string {
