@@ -29,6 +29,7 @@ async function cargarCatalogoRemoto() {
     return;
   }
   remoteOrderEndpoint = null;
+  if(el("demoHint")) el("demoHint").hidden = true;
   aviso.textContent = "Cargando menú del comercio…";
   el("menu").replaceChildren();
   el("send").disabled = true;
